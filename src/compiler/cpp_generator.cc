@@ -1621,7 +1621,7 @@ void PrintHeaderService(grpc_generator::Printer* printer,
       " public:\n");
   printer->Indent();
   printer->Print("Service();\n");
-  printer->Print("virtual ~Service();\n");
+  printer->Print("~Service() override;\n");
   for (int i = 0; i < service->method_count(); ++i) {
     PrintHeaderServerMethodSync(printer, service->method(i).get(), vars);
   }

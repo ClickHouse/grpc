@@ -18,10 +18,10 @@ if(gRPC_CARES_PROVIDER STREQUAL "module")
   endif()
   set(CARES_SHARED OFF CACHE BOOL "disable shared library")
   set(CARES_STATIC ON CACHE BOOL "link cares statically")
-  if(gRPC_BACKWARDS_COMPATIBILITY_MODE)
-    # See https://github.com/grpc/grpc/issues/17255
-    set(HAVE_LIBNSL OFF CACHE BOOL "avoid cares dependency on libnsl")
-  endif()
+
+  # See https://github.com/grpc/grpc/issues/17255
+  set(HAVE_LIBNSL OFF CACHE BOOL "avoid cares dependency on libnsl")
+
   add_subdirectory("${CARES_ROOT_DIR}" third_party/cares/cares)
 
   if(TARGET c-ares)

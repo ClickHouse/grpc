@@ -575,7 +575,7 @@ static grpc_error* pollable_create(pollable_type type, pollable** p) {
     *p = nullptr;
     return err;
   }
-  struct epoll_event ev;
+  struct epoll_event ev{};
   ev.events = static_cast<uint32_t>(EPOLLIN | EPOLLET);
   ev.data.ptr = (void*)(1 | (intptr_t) & (*p)->wakeup);
   if (epoll_ctl(epfd, EPOLL_CTL_ADD, (*p)->wakeup.read_fd, &ev) != 0) {

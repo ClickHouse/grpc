@@ -1698,7 +1698,8 @@ ChannelData::ChannelData(grpc_channel_element_args* args, grpc_error** error)
       grpc_channel_args_find(args->channel_args, GRPC_ARG_SERVICE_CONFIG));
   if (service_config_json == nullptr) service_config_json = "{}";
   *error = GRPC_ERROR_NONE;
-  default_service_config_ = ServiceConfig::Create(service_config_json, error);
+  default_service_config_ =
+      ServiceConfig::Create(args->channel_args, service_config_json, error);
   if (*error != GRPC_ERROR_NONE) {
     default_service_config_.reset();
     return;
@@ -3952,8 +3953,7 @@ grpc_error* CallData::ApplyServiceConfigToCallLocked(
             chand, this);
   }
   ConfigSelector* config_selector = chand->config_selector();
-  auto service_config = chand->service_config();
-  if (service_config != nullptr) {
+  if (config_selector != nullptr) {
     // Use the ConfigSelector to determine the config for the call.
     ConfigSelector::CallConfig call_config =
         config_selector->GetCallConfig({&path_, initial_metadata, arena_});
@@ -3966,7 +3966,8 @@ grpc_error* CallData::ApplyServiceConfigToCallLocked(
     // so that it can be accessed by filters in the subchannel, and it
     // will be cleaned up when the call ends.
     auto* service_config_call_data = arena_->New<ServiceConfigCallData>(
-        std::move(service_config), call_config.method_configs, call_context_);
+        std::move(call_config.service_config), call_config.method_configs,
+        call_context_);
     // Apply our own method params to the call.
     method_params_ = static_cast<ClientChannelMethodParsedConfig*>(
         service_config_call_data->GetMethodParsedConfig(

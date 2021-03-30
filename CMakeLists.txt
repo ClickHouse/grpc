@@ -25,12 +25,12 @@
 cmake_minimum_required(VERSION 3.5.1)
 
 set(PACKAGE_NAME          "grpc")
-set(PACKAGE_VERSION       "1.33.0-dev")
-set(gRPC_CORE_VERSION     "12.0.0")
-set(gRPC_CORE_SOVERSION   "12")
-set(gRPC_CPP_VERSION      "1.33.0-dev")
+set(PACKAGE_VERSION       "1.33.2")
+set(gRPC_CORE_VERSION     "13.0.0")
+set(gRPC_CORE_SOVERSION   "13")
+set(gRPC_CPP_VERSION      "1.33.2")
 set(gRPC_CPP_SOVERSION    "1")
-set(gRPC_CSHARP_VERSION   "2.33.0-dev")
+set(gRPC_CSHARP_VERSION   "2.33.2")
 set(gRPC_CSHARP_SOVERSION "2")
 set(PACKAGE_STRING        "${PACKAGE_NAME} ${PACKAGE_VERSION}")
 set(PACKAGE_TARNAME       "${PACKAGE_NAME}-${PACKAGE_VERSION}")
@@ -265,6 +265,8 @@ elseif(_gRPC_PLATFORM_ANDROID)
 elseif(UNIX)
   set(_gRPC_ALLTARGETS_LIBRARIES ${CMAKE_DL_LIBS} rt m pthread)
 endif()
+
+list(REMOVE_ITEM _gRPC_ALLTARGETS_LIBRARIES m)
 
 if(WIN32)
   set(_gRPC_BASELIB_LIBRARIES wsock32 ws2_32 crypt32)
@@ -808,6 +810,7 @@ if(gRPC_BUILD_TESTS)
   add_dependencies(buildtests_cxx context_list_test)
   add_dependencies(buildtests_cxx delegating_channel_test)
   add_dependencies(buildtests_cxx destroy_grpclb_channel_with_active_connect_stress_test)
+  add_dependencies(buildtests_cxx dual_ref_counted_test)
   add_dependencies(buildtests_cxx duplicate_header_bad_client_test)
   add_dependencies(buildtests_cxx end2end_test)
   add_dependencies(buildtests_cxx error_details_test)
@@ -1442,7 +1445,7 @@ add_library(grpc
   src/core/ext/filters/client_channel/lb_policy/weighted_target/weighted_target.cc
   src/core/ext/filters/client_channel/lb_policy/xds/cds.cc
   src/core/ext/filters/client_channel/lb_policy/xds/eds.cc
-  src/core/ext/filters/client_channel/lb_policy/xds/lrs.cc
+  src/core/ext/filters/client_channel/lb_policy/xds/eds_drop.cc
   src/core/ext/filters/client_channel/lb_policy/xds/xds_cluster_manager.cc
   src/core/ext/filters/client_channel/lb_policy_registry.cc
   src/core/ext/filters/client_channel/local_subchannel_pool.cc
@@ -1532,12 +1535,14 @@ add_library(grpc
   src/core/ext/upb-generated/envoy/config/core/v3/base.upb.c
   src/core/ext/upb-generated/envoy/config/core/v3/config_source.upb.c
   src/core/ext/upb-generated/envoy/config/core/v3/event_service_config.upb.c
+  src/core/ext/upb-generated/envoy/config/core/v3/extension.upb.c
   src/core/ext/upb-generated/envoy/config/core/v3/grpc_service.upb.c
   src/core/ext/upb-generated/envoy/config/core/v3/health_check.upb.c
   src/core/ext/upb-generated/envoy/config/core/v3/http_uri.upb.c
   src/core/ext/upb-generated/envoy/config/core/v3/protocol.upb.c
   src/core/ext/upb-generated/envoy/config/core/v3/proxy_protocol.upb.c
   src/core/ext/upb-generated/envoy/config/core/v3/socket_option.upb.c
+  src/core/ext/upb-generated/envoy/config/core/v3/substitution_format_string.upb.c
   src/core/ext/upb-generated/envoy/config/endpoint/v3/endpoint.upb.c
   src/core/ext/upb-generated/envoy/config/endpoint/v3/endpoint_components.upb.c
   src/core/ext/upb-generated/envoy/config/endpoint/v3/load_report.upb.c
@@ -1575,8 +1580,8 @@ add_library(grpc
   src/core/ext/upb-generated/envoy/type/v3/percent.upb.c
   src/core/ext/upb-generated/envoy/type/v3/range.upb.c
   src/core/ext/upb-generated/envoy/type/v3/semantic_version.upb.c
-  src/core/ext/upb-generated/gogoproto/gogo.upb.c
   src/core/ext/upb-generated/google/api/annotations.upb.c
+  src/core/ext/upb-generated/google/api/expr/v1alpha1/checked.upb.c
   src/core/ext/upb-generated/google/api/expr/v1alpha1/syntax.upb.c
   src/core/ext/upb-generated/google/api/http.upb.c
   src/core/ext/upb-generated/google/protobuf/any.upb.c
@@ -1593,9 +1598,16 @@ add_library(grpc
   src/core/ext/upb-generated/src/proto/grpc/health/v1/health.upb.c
   src/core/ext/upb-generated/src/proto/grpc/lb/v1/load_balancer.upb.c
   src/core/ext/upb-generated/udpa/annotations/migrate.upb.c
+  src/core/ext/upb-generated/udpa/annotations/security.upb.c
   src/core/ext/upb-generated/udpa/annotations/sensitive.upb.c
   src/core/ext/upb-generated/udpa/annotations/status.upb.c
   src/core/ext/upb-generated/udpa/annotations/versioning.upb.c
+  src/core/ext/upb-generated/udpa/core/v1/authority.upb.c
+  src/core/ext/upb-generated/udpa/core/v1/collection_entry.upb.c
+  src/core/ext/upb-generated/udpa/core/v1/context_params.upb.c
+  src/core/ext/upb-generated/udpa/core/v1/resource.upb.c
+  src/core/ext/upb-generated/udpa/core/v1/resource_locator.upb.c
+  src/core/ext/upb-generated/udpa/core/v1/resource_name.upb.c
   src/core/ext/upb-generated/udpa/data/orca/v1/orca_load_report.upb.c
   src/core/ext/upb-generated/validate/validate.upb.c
   src/core/ext/xds/certificate_provider_registry.cc
@@ -1757,6 +1769,7 @@ add_library(grpc
   src/core/lib/security/credentials/tls/grpc_tls_certificate_distributor.cc
   src/core/lib/security/credentials/tls/grpc_tls_credentials_options.cc
   src/core/lib/security/credentials/tls/tls_credentials.cc
+  src/core/lib/security/credentials/xds/xds_credentials.cc
   src/core/lib/security/security_connector/alts/alts_security_connector.cc
   src/core/lib/security/security_connector/fake/fake_security_connector.cc
   src/core/lib/security/security_connector/load_system_roots_fallback.cc
@@ -2213,8 +2226,8 @@ add_library(grpc_unsecure
   src/core/ext/transport/chttp2/transport/writing.cc
   src/core/ext/transport/inproc/inproc_plugin.cc
   src/core/ext/transport/inproc/inproc_transport.cc
-  src/core/ext/upb-generated/gogoproto/gogo.upb.c
   src/core/ext/upb-generated/google/api/annotations.upb.c
+  src/core/ext/upb-generated/google/api/expr/v1alpha1/checked.upb.c
   src/core/ext/upb-generated/google/api/expr/v1alpha1/syntax.upb.c
   src/core/ext/upb-generated/google/api/http.upb.c
   src/core/ext/upb-generated/google/protobuf/any.upb.c
@@ -2715,7 +2728,6 @@ foreach(_hdr
   include/grpc++/support/sync_stream.h
   include/grpc++/support/time.h
   include/grpcpp/alarm.h
-  include/grpcpp/alarm_impl.h
   include/grpcpp/channel.h
   include/grpcpp/client_context.h
   include/grpcpp/completion_queue.h
@@ -2785,10 +2797,8 @@ foreach(_hdr
   include/grpcpp/impl/rpc_service_method.h
   include/grpcpp/impl/serialization_traits.h
   include/grpcpp/impl/server_builder_option.h
-  include/grpcpp/impl/server_builder_option_impl.h
   include/grpcpp/impl/server_builder_plugin.h
   include/grpcpp/impl/server_initializer.h
-  include/grpcpp/impl/server_initializer_impl.h
   include/grpcpp/impl/service_type.h
   include/grpcpp/resource_quota.h
   include/grpcpp/security/auth_context.h
@@ -3387,7 +3397,6 @@ foreach(_hdr
   include/grpc++/support/sync_stream.h
   include/grpc++/support/time.h
   include/grpcpp/alarm.h
-  include/grpcpp/alarm_impl.h
   include/grpcpp/channel.h
   include/grpcpp/client_context.h
   include/grpcpp/completion_queue.h
@@ -3457,10 +3466,8 @@ foreach(_hdr
   include/grpcpp/impl/rpc_service_method.h
   include/grpcpp/impl/serialization_traits.h
   include/grpcpp/impl/server_builder_option.h
-  include/grpcpp/impl/server_builder_option_impl.h
   include/grpcpp/impl/server_builder_plugin.h
   include/grpcpp/impl/server_initializer.h
-  include/grpcpp/impl/server_initializer_impl.h
   include/grpcpp/impl/service_type.h
   include/grpcpp/resource_quota.h
   include/grpcpp/security/auth_context.h
@@ -10545,6 +10552,45 @@ target_link_libraries(destroy_grpclb_channel_with_active_connect_stress_test
   grpc++_test_util
   grpc_test_util
   grpc++
+  grpc
+  gpr
+  address_sorting
+  upb
+  ${_gRPC_GFLAGS_LIBRARIES}
+)
+
+
+endif()
+if(gRPC_BUILD_TESTS)
+
+add_executable(dual_ref_counted_test
+  test/core/gprpp/dual_ref_counted_test.cc
+  third_party/googletest/googletest/src/gtest-all.cc
+  third_party/googletest/googlemock/src/gmock-all.cc
+)
+
+target_include_directories(dual_ref_counted_test
+  PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${_gRPC_ADDRESS_SORTING_INCLUDE_DIR}
+    ${_gRPC_RE2_INCLUDE_DIR}
+    ${_gRPC_SSL_INCLUDE_DIR}
+    ${_gRPC_UPB_GENERATED_DIR}
+    ${_gRPC_UPB_GRPC_GENERATED_DIR}
+    ${_gRPC_UPB_INCLUDE_DIR}
+    ${_gRPC_ZLIB_INCLUDE_DIR}
+    third_party/googletest/googletest/include
+    third_party/googletest/googletest
+    third_party/googletest/googlemock/include
+    third_party/googletest/googlemock
+    ${_gRPC_PROTO_GENS_DIR}
+)
+
+target_link_libraries(dual_ref_counted_test
+  ${_gRPC_PROTOBUF_LIBRARIES}
+  ${_gRPC_ALLTARGETS_LIBRARIES}
+  grpc_test_util
   grpc
   gpr
   address_sorting

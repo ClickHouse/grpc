@@ -109,7 +109,7 @@ struct pollable {
 
   int event_cursor;
   int event_count;
-  struct epoll_event events[MAX_EPOLL_EVENTS];
+  struct epoll_event events[MAX_EPOLL_EVENTS]{};
 };
 
 static const char* pollable_type_string(pollable_type t) {

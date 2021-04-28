@@ -22,7 +22,13 @@
 
 #include <ares.h>
 #include <string.h>
-#include <sys/ioctl.h>
+
+#if defined(__sun)
+# include <unistd.h>    // ioctl(2)
+# include <sys/filio.h> // FIONREAD
+#else
+# include <sys/ioctl.h>
+#endif
 
 #include "absl/strings/str_cat.h"
 

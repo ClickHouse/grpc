@@ -94,7 +94,7 @@ class RpcServiceMethod : public RpcMethod {
   enum class ApiType {
     SYNC,
     ASYNC,
-    RAW,
+    RAW_,       // not RAW because that is an alias of O_RAW on Solaris
     CALL_BACK,  // not CALLBACK because that is reserved in Windows
     RAW_CALL_BACK,
   };
@@ -107,7 +107,7 @@ class RpcServiceMethod : public RpcMethod {
   void SetHandler(MethodHandler* handler) { handler_.reset(handler); }
   void SetServerApiType(RpcServiceMethod::ApiType type) {
     if ((api_type_ == ApiType::SYNC) &&
-        (type == ApiType::ASYNC || type == ApiType::RAW)) {
+        (type == ApiType::ASYNC || type == ApiType::RAW_)) {
       // this marks this method as async
       handler_.reset();
     } else if (api_type_ != ApiType::SYNC) {
@@ -135,7 +135,7 @@ class RpcServiceMethod : public RpcMethod {
         return "sync";
       case ApiType::ASYNC:
         return "async";
-      case ApiType::RAW:
+      case ApiType::RAW_:
         return "raw";
       case ApiType::CALL_BACK:
         return "callback";

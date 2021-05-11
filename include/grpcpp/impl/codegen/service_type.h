@@ -187,7 +187,7 @@ class Service {
     GPR_CODEGEN_ASSERT(methods_[idx].get() != nullptr &&
                        "Cannot mark the method as 'raw' because it has already "
                        "been marked as 'generic'.");
-    methods_[idx]->SetServerApiType(internal::RpcServiceMethod::ApiType::RAW);
+    methods_[idx]->SetServerApiType(internal::RpcServiceMethod::ApiType::RAW_);
   }
 
   void MarkMethodGeneric(int index) {

@@ -250,7 +250,6 @@ endif()
 include(cmake/abseil-cpp.cmake)
 include(cmake/address_sorting.cmake)
 include(cmake/benchmark.cmake)
-include(cmake/cares.cmake)
 include(cmake/gflags.cmake)
 include(cmake/protobuf.cmake)
 include(cmake/re2.cmake)
@@ -15784,7 +15783,6 @@ install(FILES
   DESTINATION ${gRPC_INSTALL_CMAKEDIR}
 )
 install(FILES
-    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/Findc-ares.cmake
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/Findre2.cmake
   DESTINATION ${gRPC_INSTALL_CMAKEDIR}/modules
 )

@@ -684,6 +684,8 @@ bool grpc_cq_begin_op(grpc_completion_queue* cq, void* tag) {
   return cq->vtable->begin_op(cq, tag);
 }
 
+extern std::string printStackTrace();
+
 /* Queue a GRPC_OP_COMPLETED operation to a completion queue (with a
  * completion
  * type of GRPC_CQ_NEXT) */
@@ -738,7 +740,8 @@ static void cq_end_op_for_next(
 
         if (kick_error != GRPC_ERROR_NONE) {
           const char* msg = grpc_error_string(kick_error);
-          gpr_log(GPR_ERROR, "Kick failed: %s", msg);
+          std::string trace = printStackTrace();
+          gpr_log(GPR_ERROR, "Kick failed: %s, stack trace: %s", msg, trace.c_str());
           GRPC_ERROR_UNREF(kick_error);
         }
       }
@@ -823,7 +826,8 @@ static void cq_end_op_for_pluck(
 
     if (kick_error != GRPC_ERROR_NONE) {
       const char* msg = grpc_error_string(kick_error);
-      gpr_log(GPR_ERROR, "Kick failed: %s", msg);
+      std::string trace = printStackTrace();
+      gpr_log(GPR_ERROR, "Kick failed: %s, stack trace: %s", msg, trace.c_str());
 
       GRPC_ERROR_UNREF(kick_error);
     }

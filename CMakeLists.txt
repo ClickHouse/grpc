@@ -288,6 +288,8 @@ elseif(UNIX)
   set(_gRPC_ALLTARGETS_LIBRARIES ${CMAKE_DL_LIBS} rt m pthread)
 endif()
 
+list(REMOVE_ITEM _gRPC_ALLTARGETS_LIBRARIES m)
+
 if(WIN32)
   set(_gRPC_BASELIB_LIBRARIES ws2_32 crypt32)
 endif()

@@ -22,6 +22,8 @@
 #include "src/core/lib/security/credentials/tls/tls_utils.h"
 #include "src/core/lib/slice/slice_utils.h"
 
+#include "absl/strings/numbers.h"
+
 namespace grpc_core {
 
 namespace {

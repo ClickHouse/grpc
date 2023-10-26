@@ -29,6 +29,8 @@
 #include "src/core/lib/channel/channel_args.h"
 #include "src/core/lib/gpr/string.h"
 
+#include "absl/strings/str_cat.h"
+
 namespace grpc_core {
 namespace {
 

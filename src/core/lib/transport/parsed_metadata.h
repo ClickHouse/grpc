@@ -22,6 +22,7 @@
 
 #include "absl/meta/type_traits.h"
 #include "absl/strings/match.h"
+#include "absl/strings/str_cat.h"
 
 #include "src/core/lib/iomgr/error.h"
 #include "src/core/lib/slice/slice.h"

@@ -29,6 +29,8 @@
 #include "src/core/lib/resolver/resolver_registry.h"
 #include "src/core/lib/resolver/server_address.h"
 
+#include "absl/strings/str_cat.h"
+
 namespace grpc_core {
 namespace {
 

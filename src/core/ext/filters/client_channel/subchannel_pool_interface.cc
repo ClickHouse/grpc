@@ -23,6 +23,8 @@
 #include "src/core/lib/address_utils/sockaddr_utils.h"
 #include "src/core/lib/gpr/useful.h"
 
+#include "absl/strings/str_cat.h"
+
 // The subchannel pool to reuse subchannels.
 #define GRPC_ARG_SUBCHANNEL_POOL "grpc.internal.subchannel_pool"
 // The subchannel key ID that is only used in test to make each key unique.

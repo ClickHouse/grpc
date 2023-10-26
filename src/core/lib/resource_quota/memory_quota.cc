@@ -24,6 +24,8 @@
 #include "src/core/lib/promise/seq.h"
 #include "src/core/lib/resource_quota/trace.h"
 
+#include "absl/strings/str_cat.h"
+
 namespace grpc_core {
 
 // Maximum number of bytes an allocator will request from a quota in one step.

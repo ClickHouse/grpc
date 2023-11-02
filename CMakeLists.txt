@@ -305,6 +305,8 @@ if(UNIX)
   endif()
 endif()
 
+list(REMOVE_ITEM _gRPC_ALLTARGETS_LIBRARIES m)
+
 include(cmake/abseil-cpp.cmake)
 include(cmake/address_sorting.cmake)
 include(cmake/benchmark.cmake)

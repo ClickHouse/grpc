@@ -43,6 +43,8 @@
 #include "src/core/lib/slice/slice_string_helpers.h"
 #include "src/core/tsi/transport_security_grpc.h"
 
+#include "absl/strings/str_cat.h"
+
 #define STAGING_BUFFER_SIZE 8192
 
 static void on_read(void* user_data, grpc_error_handle error);

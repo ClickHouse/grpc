@@ -312,6 +312,8 @@ if(UNIX AND NOT HAIKU)
   endif()
 endif()
 
+list(REMOVE_ITEM _gRPC_ALLTARGETS_LIBRARIES m)
+
 # configure ccache if requested
 include(cmake/ccache.cmake)
 

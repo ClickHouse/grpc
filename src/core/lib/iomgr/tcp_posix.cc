@@ -69,6 +69,8 @@
 #include "src/core/lib/slice/slice_internal.h"
 #include "src/core/lib/slice/slice_string_helpers.h"
 
+#include "absl/strings/str_cat.h"
+
 #ifndef SOL_TCP
 #define SOL_TCP IPPROTO_TCP
 #endif

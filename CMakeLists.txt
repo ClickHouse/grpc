@@ -305,6 +305,8 @@ if(UNIX AND NOT HAIKU)
   endif()
 endif()
 
+list(REMOVE_ITEM _gRPC_ALLTARGETS_LIBRARIES m)
+
 include(CheckCXXSourceCompiles)
 
 if(UNIX OR APPLE)

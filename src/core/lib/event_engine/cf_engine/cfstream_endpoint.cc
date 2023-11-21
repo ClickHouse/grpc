@@ -22,6 +22,8 @@
 #include "src/core/lib/event_engine/trace.h"
 #include "src/core/lib/gprpp/strerror.h"
 
+#include "absl/strings/str_cat.h"
+
 namespace grpc_event_engine {
 namespace experimental {
 

@@ -71,6 +71,9 @@ class BdpEstimator {
     GPR_ASSERT(ping_state_ == PingState::SCHEDULED);
     ping_state_ = PingState::STARTED;
     ping_start_time_ = gpr_now(GPR_CLOCK_MONOTONIC);
+    if (!seed_) {
+      seed_ = ping_start_time_.tv_nsec;
+    }
   }
 
   // Completes a previously started ping, returns when to schedule the next one
@@ -89,6 +92,7 @@ class BdpEstimator {
   int stable_estimate_count_;
   PingState ping_state_;
   double bw_est_;
+  unsigned int seed_;
   absl::string_view name_;
 };
 

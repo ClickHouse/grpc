@@ -37,6 +37,7 @@ BdpEstimator::BdpEstimator(absl::string_view name)
       stable_estimate_count_(0),
       ping_state_(PingState::UNSCHEDULED),
       bw_est_(0),
+      seed_(0),
       name_(name) {}
 
 Timestamp BdpEstimator::CompletePing() {
@@ -63,7 +64,7 @@ Timestamp BdpEstimator::CompletePing() {
     if (stable_estimate_count_ >= 2) {
       // if the ping estimate is steady, slowly ramp down the probe time
       inter_ping_delay_ += Duration::Milliseconds(
-          100 + static_cast<int>(rand() * 100.0 / RAND_MAX));
+          100 + static_cast<int>(rand_r(&seed_) * 100.0 / RAND_MAX));
     }
   }
   if (start_inter_ping_delay != inter_ping_delay_) {

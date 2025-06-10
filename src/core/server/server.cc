@@ -734,8 +734,8 @@ class Server::RealRequestMatcher : public RequestMatcherInterface {
         if (rc != nullptr) break;
       }
       if (rc == nullptr) {
-        if (server_->pending_backlog_protector_.Reject(pending_promises_.size(),
-                                                       SharedBitGen())) {
+        SharedBitGen bitgen;
+        if (server_->pending_backlog_protector_.Reject(pending_promises_.size(), bitgen)) {
           return Immediate(absl::ResourceExhaustedError(
               "Too many pending requests for this server"));
         }

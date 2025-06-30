@@ -32,7 +32,6 @@
 #include <atomic>
 #include <memory>
 #include <optional>
-#include <regex>
 #include <utility>
 
 #include "absl/base/thread_annotations.h"

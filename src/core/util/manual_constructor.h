@@ -114,7 +114,9 @@ class ManualConstructor {
   Type& operator*() { return *get(); }
   const Type& operator*() const { return *get(); }
 
-  void Init() { Construct(get()); }
+  // The Init() overloads construct into the raw space: `get()` before the
+  // object exists fails Clang CFI (`-fsanitize=cfi-unrelated-cast`).
+  void Init() { new (&space_) Type(); }
 
   // Init() constructs the Type instance using the given arguments
   // (which are forwarded to Type's constructor).
@@ -124,15 +126,15 @@ class ManualConstructor {
   // "new Type();"), so it will leave non-class types uninitialized.
   template <typename... Ts>
   void Init(Ts&&... args) {
-    Construct(get(), std::forward<Ts>(args)...);
+    new (&space_) Type(std::forward<Ts>(args)...);
   }
 
   // Init() that is equivalent to copy and move construction.
   // Enables usage like this:
   //   ManualConstructor<std::vector<int>> v;
   //   v.Init({1, 2, 3});
-  void Init(const Type& x) { Construct(get(), x); }
-  void Init(Type&& x) { Construct(get(), std::forward<Type>(x)); }
+  void Init(const Type& x) { new (&space_) Type(x); }
+  void Init(Type&& x) { new (&space_) Type(std::forward<Type>(x)); }
 
   void Destroy() { Destruct(get()); }
 

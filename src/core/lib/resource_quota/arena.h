@@ -191,9 +191,9 @@ class Arena final : public RefCounted<Arena, NonPolymorphicRefCount,
   // this method.
   template <typename T, typename... Args>
   T* New(Args&&... args) {
-    T* t = static_cast<T*>(Alloc(sizeof(T)));
-    new (t) T(std::forward<Args>(args)...);
-    return t;
+    // Construct into the raw memory: a pointer to a T that does not exist yet
+    // fails Clang CFI (`-fsanitize=cfi-unrelated-cast`).
+    return new (Alloc(sizeof(T))) T(std::forward<Args>(args)...);
   }
 
   // Like New, but has the arena call p->~T() at arena destruction time.

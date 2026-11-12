@@ -17,6 +17,7 @@
 
 #include <grpc/support/port_platform.h>
 
+#include <new>
 #include <type_traits>
 #include <utility>
 
@@ -53,7 +54,9 @@ class NoDestruct {
   explicit NoDestruct(Args&&... args) {
     static_assert(std::is_trivially_destructible<NoDestruct<T>>::value,
                   "NoDestruct must be trivially destructible");
-    Construct(reinterpret_cast<T*>(&space_), std::forward<Args>(args)...);
+    // Construct into the raw storage: a pointer to T before T exists fails
+    // Clang CFI (`-fsanitize=cfi-unrelated-cast`).
+    new (&space_) T(std::forward<Args>(args)...);
   }
   NoDestruct(const NoDestruct&) = delete;
   NoDestruct& operator=(const NoDestruct&) = delete;
